@@ -21,20 +21,22 @@ namespace IZ_DB_app
     /// Interaction logic for MainWindow.xaml
     /// </summary>
 
-   
+
 
 
     public partial class MainWindow : Window
     {
         public static string connection = @"Data Source=DESKTOP-UI0U6SI\SQLEXPRESS;Initial Catalog=izdat;Integrated Security=True";
         private Insert insert = new();
-        private DataGrid roottab = new DataGrid() { IsReadOnly = true};
+        private DataGrid roottab = new DataGrid() { IsReadOnly = true };
+        private DataGrid sctab = new() { IsReadOnly = true };
         public MainWindow()
         {
             InitializeComponent();
         }
 
-       // LoginWindow login = new LoginWindow();
+        LoginWindow login = new LoginWindow();
+
         private void TableOutput(string sql, DataGrid dataGrid)
         {
             using (SqlConnection conn = new SqlConnection(connection))
@@ -45,7 +47,6 @@ namespace IZ_DB_app
                 sda.Fill(ds);
                 dataGrid.ItemsSource = ds.Tables[0].DefaultView;
                 conn.Close();
-
             }
         }
 
@@ -55,15 +56,18 @@ namespace IZ_DB_app
         }
 
 
-        //при снятии комента вернуть --> Loaded="Window_Loaded" <---- в ксамл xaml
-        /* private void Window_Loaded(object sender, RoutedEventArgs e)
-         {
-             login.Owner = this;
-             login.Show();
-             Hide();
-         }*/
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            login.Owner = this;
+            login.Show();
+            Hide();
+        }
 
-        
+        private void MenuItem_change_Click(object sender, RoutedEventArgs e)
+        {
+            login.Show();
+            Hide();
+        }
 
         private void MenuItem_tirazh_Click(object sender, RoutedEventArgs e)
         {
@@ -102,7 +106,12 @@ namespace IZ_DB_app
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-
+            if (add1.Text != ""
+            && (add2.Text != "" || add2.Visibility == Visibility.Hidden)
+            && (add3.Text != "" || add3.Visibility == Visibility.Hidden)
+            && (add4.Text != "" || add4.Visibility == Visibility.Hidden)
+            && (add5.Text != "" || add5.Visibility == Visibility.Hidden))
+            {
                 using (SqlConnection conn = new SqlConnection(connection))
                 {
                     conn.Open();
@@ -120,7 +129,6 @@ namespace IZ_DB_app
                     SqlCommand com = new SqlCommand(command, conn);
                     com.ExecuteNonQuery();
                 }
-               // TableOutput("select*from [dbo].[Needs]", roottab);
 
                 add1.Clear();
                 add2.Clear();
@@ -128,13 +136,17 @@ namespace IZ_DB_app
                 add4.Clear();
                 add5.Clear();
 
-                  Refresh();
+            }
+            else
+            {
+                MessageBox.Show("Остались пустые поля", "Беда!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void MenuItem_view_tirazh_Click(object sender, RoutedEventArgs e)
         {
             Refresh();
-            vivod.Items.Add(new TabItem { Header = "Тиражи", Content = roottab}) ;
+            vivod.Items.Add(new TabItem { Header = "Тиражи", Content = roottab });
             vivod.SelectedIndex = 0;
             TableOutput("exec loadNeeds", roottab);
         }
@@ -175,7 +187,7 @@ namespace IZ_DB_app
             add4.Visibility = Visibility.Visible;
 
             header5.Visibility = Visibility.Visible;
-            header5.Content = "День рождения сотрудника";
+            header5.Content = "День рождения сотрудника ГГГГ-ММ-ДД";
             add5.Visibility = Visibility.Visible;
             Refresh();
 
@@ -189,11 +201,7 @@ namespace IZ_DB_app
         private void MenuItem_view_employee_Click(object sender, RoutedEventArgs e)
         {
             Refresh();
-            vivod.Items.Add(new TabItem
-            {
-                Header = "Сотрудники",
-                Content = roottab
-            });
+            vivod.Items.Add(new TabItem {Header = "Сотрудники", Content = roottab});
             vivod.SelectedIndex = 0;
             TableOutput("exec loadEmployees", roottab);
         }
@@ -394,11 +402,7 @@ namespace IZ_DB_app
         private void MenuItem_view_provider_Click(object sender, RoutedEventArgs e)
         {
             Refresh();
-            vivod.Items.Add(new TabItem
-            {
-                Header = "Поставщики",
-                Content = roottab
-            });
+            vivod.Items.Add(new TabItem {Header = "Поставщики", Content = roottab});
             vivod.SelectedIndex = 0;
             TableOutput("exec loadProviders", roottab);
         }
@@ -437,11 +441,7 @@ namespace IZ_DB_app
         private void MenuItem_view_material_Click(object sender, RoutedEventArgs e)
         {
             Refresh();
-            vivod.Items.Add(new TabItem
-            {
-                Header = "Материалы",
-                Content = roottab
-            });
+            vivod.Items.Add(new TabItem {Header = "Материалы", Content = roottab });
             vivod.SelectedIndex = 0;
             TableOutput("exec loadMaterials", roottab);
         }
@@ -603,9 +603,394 @@ namespace IZ_DB_app
             TableOutput("exec loadNeeds", roottab);
             insert.insertCommand = @"insert into [dbo].[Ordered_books] values('?', '?', ?, ?)";
         }
+
+        private void MenuItem_view_administrative_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Помещения", Content = roottab });
+            TableOutput("exec loadAdministrative", roottab);
+        }
+
+        private void MenuItem_administrative_Click(object sender, RoutedEventArgs e)
+        {
+            addTitle.Visibility = Visibility.Visible;
+            addTitle.Content = "Добавление поммещения";
+
+            Submit.Visibility = Visibility.Visible;
+
+            header1.Visibility = Visibility.Visible;
+            header1.Content = "ID недвижимости";
+            add1.Visibility = Visibility.Visible;
+
+            header2.Visibility = Visibility.Visible;
+            header2.Content = "Номер помещения";
+            add2.Visibility = Visibility.Visible;
+
+            header3.Visibility = Visibility.Visible;
+            header3.Content = "Наименование помещения";
+            add3.Visibility = Visibility.Visible;
+
+            header4.Visibility = Visibility.Hidden;
+            add4.Visibility = Visibility.Hidden;
+
+            header5.Visibility = Visibility.Hidden;
+            add5.Visibility = Visibility.Hidden;
+
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Недвижимость", Content = roottab });
+            TableOutput("exec loadIZ_estate", roottab);
+            insert.insertCommand = @"insert into [dbo].[Administrative] values(?, '?', '?')";
+
+        }
+
+        private void MenuItem_view_workplace_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Рабочие места", Content = roottab });
+            TableOutput("exec loadWorkplace", roottab);
+        }
+
+        private void MenuItem_workplace_Click(object sender, RoutedEventArgs e)
+        {
+            addTitle.Visibility = Visibility.Visible;
+            addTitle.Content = "Добавление поммещения";
+
+            Submit.Visibility = Visibility.Visible;
+
+            header1.Visibility = Visibility.Visible;
+            header1.Content = "Тип рабочего места";
+            add1.Visibility = Visibility.Visible;
+
+            header2.Visibility = Visibility.Visible;
+            header2.Content = "ID помещения";
+            add2.Visibility = Visibility.Visible;
+
+            header3.Visibility = Visibility.Hidden;
+            add3.Visibility = Visibility.Hidden;
+
+            header4.Visibility = Visibility.Hidden;
+            add4.Visibility = Visibility.Hidden;
+
+            header5.Visibility = Visibility.Hidden;
+            add5.Visibility = Visibility.Hidden;
+
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Помещения", Content = roottab });
+            TableOutput("exec loadAdministrative", roottab);
+            insert.insertCommand = @"insert into [dbo].[Workplace] values('?', ?)";
+        }
+
+        private void MenuItem_order_check_Click(object sender, RoutedEventArgs e)
+        {
+            addTitle.Visibility = Visibility.Visible;
+            addTitle.Content = "Добавление итога заказа";
+
+            Submit.Visibility = Visibility.Visible;
+
+            header1.Visibility = Visibility.Visible;
+            header1.Content = "ID книги";
+            add1.Visibility = Visibility.Visible;
+
+            header2.Visibility = Visibility.Visible;
+            header2.Content = "ID материала";
+            add2.Visibility = Visibility.Visible;
+
+            header3.Visibility = Visibility.Visible;
+            header3.Content = "Затрачено бумаги";
+            add3.Visibility = Visibility.Visible;
+
+            header4.Visibility = Visibility.Visible;
+            header4.Content = "Затрачено чернил";
+            add4.Visibility = Visibility.Visible;
+
+            header5.Visibility = Visibility.Visible;
+            header5.Content = "Цена";
+            add5.Visibility = Visibility.Visible;
+
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Материалы для работы", Content = roottab });
+            TableOutput("exec loadWork_materials", roottab);
+
+            TableOutput("exec loadOrdered_books", sctab);
+            vivod.Items.Add(new TabItem { Header = "Книги", Content = sctab });
+            insert.insertCommand = @"insert into [dbo].[Order_check] values(?, ?, ?, ?, ?)";
+        }
+
+        private void MenuItem_view_order_check_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Итог заказа", Content = roottab });
+            TableOutput("exec loadOrder_check", roottab);
+        }
+
+        private void MenuItem_view_contract_materials_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Приходная накладная (тело)", Content = roottab });
+            TableOutput("exec loadContract_materials", roottab);
+
+
+        }
+
+        private void MenuItem_contract_materials_Click(object sender, RoutedEventArgs e)
+        {
+            addTitle.Visibility = Visibility.Visible;
+            addTitle.Content = "Добавление приходной накладной (тело)";
+
+            Submit.Visibility = Visibility.Visible;
+
+            header1.Visibility = Visibility.Visible;
+            header1.Content = "ID шапки";
+            add1.Visibility = Visibility.Visible;
+
+            header2.Visibility = Visibility.Visible;
+            header2.Content = "ID материала";
+            add2.Visibility = Visibility.Visible;
+
+            header3.Visibility = Visibility.Visible;
+            header3.Content = "Цена";
+            add3.Visibility = Visibility.Visible;
+
+            header4.Visibility = Visibility.Hidden;
+            add4.Visibility = Visibility.Hidden;
+
+            header5.Visibility = Visibility.Hidden;
+            add5.Visibility = Visibility.Hidden;
+
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Шапка", Content = roottab });
+            TableOutput("exec loadContract", roottab);
+
+            TableOutput("exec loadMaterials", sctab);
+            vivod.Items.Add(new TabItem { Header = "Материалы", Content = sctab });
+
+            insert.insertCommand = @"insert into [dbo].[Contract_materials] values(?, ?, ?)";
+        }
+
+        private void MenuItem_view_books_authors_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Книги по авторам", Content = roottab });
+            TableOutput("exec loadBooks_authors", roottab);
+        }
+
+        private void MenuItem_books_authors_Click(object sender, RoutedEventArgs e)
+        {
+            addTitle.Visibility = Visibility.Visible;
+            addTitle.Content = "Добавлении книги по автору";
+
+            Submit.Visibility = Visibility.Visible;
+
+            header1.Visibility = Visibility.Visible;
+            header1.Content = "ID книги";
+            add1.Visibility = Visibility.Visible;
+
+            header2.Visibility = Visibility.Visible;
+            header2.Content = "ID автора";
+            add2.Visibility = Visibility.Visible;
+
+            header3.Visibility = Visibility.Hidden;
+            add3.Visibility = Visibility.Hidden;
+
+            header4.Visibility = Visibility.Hidden;
+            add4.Visibility = Visibility.Hidden;
+
+            header5.Visibility = Visibility.Hidden;
+            add5.Visibility = Visibility.Hidden;
+
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Книги", Content = roottab });
+            TableOutput("exec loadOrdered_books", roottab);
+
+            vivod.Items.Add(new TabItem { Header = "Авторы", Content = sctab });
+            TableOutput("exec loadAuthors", sctab);
+
+            insert.insertCommand = @"insert into [dbo].[Books_authors] values(?, ?)";
+        }
+
+        private void MenuItem_view_masters_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Мастера", Content = roottab });
+            TableOutput("exec loadMasters", roottab);
+        }
+
+        private void MenuItem_masters_Click(object sender, RoutedEventArgs e)
+        {
+            addTitle.Visibility = Visibility.Visible;
+            addTitle.Content = "Назаначение мастера";
+
+            Submit.Visibility = Visibility.Visible;
+
+            header1.Visibility = Visibility.Visible;
+            header1.Content = "ID сотрудника";
+            add1.Visibility = Visibility.Visible;
+
+            header2.Visibility = Visibility.Visible;
+            header2.Content = "ID обслуживания";
+            add2.Visibility = Visibility.Visible;
+
+            header3.Visibility = Visibility.Hidden;
+            add3.Visibility = Visibility.Hidden;
+
+            header4.Visibility = Visibility.Hidden;
+            add4.Visibility = Visibility.Hidden;
+
+            header5.Visibility = Visibility.Hidden;
+            add5.Visibility = Visibility.Hidden;
+
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Сотрудники", Content = roottab });
+            TableOutput("exec loadEmployees", roottab);
+
+            vivod.Items.Add(new TabItem { Header = "Типы обслуживания", Content = sctab });
+            TableOutput("exec loadMaintenance", sctab);
+
+            insert.insertCommand = @"insert into [dbo].[Masters] values(?, ?)";
+        }
+
+        private void MenuItem_view_mactivities_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Мероприятия по обслуживанию", Content = roottab });
+            TableOutput("exec loadMActivities", roottab);
+        }
+
+        private void MenuItem_mactivitiess_Click(object sender, RoutedEventArgs e)
+        {
+            addTitle.Visibility = Visibility.Visible;
+            addTitle.Content = "Добавление мероприятия по обслуживанию";
+
+            Submit.Visibility = Visibility.Visible;
+
+            header1.Visibility = Visibility.Visible;
+            header1.Content = "ID оборудования";
+            add1.Visibility = Visibility.Visible;
+
+            header2.Visibility = Visibility.Visible;
+            header2.Content = "ID обслуживания";
+            add2.Visibility = Visibility.Visible;
+
+            header3.Visibility = Visibility.Hidden;
+            add3.Visibility = Visibility.Hidden;
+
+            header4.Visibility = Visibility.Hidden;
+            add4.Visibility = Visibility.Hidden;
+
+            header5.Visibility = Visibility.Hidden;
+            add5.Visibility = Visibility.Hidden;
+
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Оборудование", Content = roottab });
+            TableOutput("exec loadEquipment", roottab);
+
+            vivod.Items.Add(new TabItem { Header = "Типа обслуживания", Content = sctab });
+            TableOutput("exec loadMaintenance", sctab);
+
+            insert.insertCommand = @"insert into [dbo].[MActivities] values(?, ?)";
+        }
+
+        private void MenuItem_view_workplace_employees_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Сотрудниики по рабочим местам", Content = roottab });
+            TableOutput("exec loadWorkplace_Employees", roottab);
+        }
+
+        private void MenuItem_workplace_employees_Click(object sender, RoutedEventArgs e)
+        {
+            addTitle.Visibility = Visibility.Visible;
+            addTitle.Content = "Добавление сотрудника на рабочее место";
+
+            Submit.Visibility = Visibility.Visible;
+
+            header1.Visibility = Visibility.Visible;
+            header1.Content = "ID рабочего места";
+            add1.Visibility = Visibility.Visible;
+
+            header2.Visibility = Visibility.Visible;
+            header2.Content = "ID сотрудника";
+            add2.Visibility = Visibility.Visible;
+
+            header3.Visibility = Visibility.Hidden;
+            add3.Visibility = Visibility.Hidden;
+
+            header4.Visibility = Visibility.Hidden;
+            add4.Visibility = Visibility.Hidden;
+
+            header5.Visibility = Visibility.Hidden;
+            add5.Visibility = Visibility.Hidden;
+
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Рабочие места", Content = roottab });
+            TableOutput("exec loadWorkplace", roottab);
+
+            vivod.Items.Add(new TabItem { Header = "Сотрудники", Content = sctab });
+            TableOutput("exec loadEmployees", sctab);
+
+            insert.insertCommand = @"insert into [dbo].[Workplace_Employees] values(?, ?)";
+        }
+
+        private void MenuItem_view_workplace_equipment_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Оборудование по рабочим местам", Content = roottab });
+            TableOutput("exec loadWorkplace_equipment", roottab);
+        }
+
+        private void MenuItem_workplace_equipment_Click(object sender, RoutedEventArgs e)
+        {
+            addTitle.Visibility = Visibility.Visible;
+            addTitle.Content = "Добавление оборудовния на рабочее место";
+
+            Submit.Visibility = Visibility.Visible;
+
+            header1.Visibility = Visibility.Visible;
+            header1.Content = "ID рабочего места";
+            add1.Visibility = Visibility.Visible;
+
+            header2.Visibility = Visibility.Visible;
+            header2.Content = "ID оборудования";
+            add2.Visibility = Visibility.Visible;
+
+            header3.Visibility = Visibility.Hidden;
+            add3.Visibility = Visibility.Hidden;
+
+            header4.Visibility = Visibility.Hidden;
+            add4.Visibility = Visibility.Hidden;
+
+            header5.Visibility = Visibility.Hidden;
+            add5.Visibility = Visibility.Hidden;
+
+            Refresh();
+            vivod.SelectedIndex = 0;
+            vivod.Items.Add(new TabItem { Header = "Рабочие места", Content = roottab });
+            TableOutput("exec loadWorkplace", roottab);
+
+            vivod.Items.Add(new TabItem { Header = "Оборудование", Content = sctab });
+            TableOutput("exec loadEquipment", sctab);
+
+            insert.insertCommand = @"insert into [dbo].[Workplace_Equipment] values(?, ?)";
+        }
+
+       
     }
 
-}   
-
-
-
+}

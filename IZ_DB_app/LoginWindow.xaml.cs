@@ -19,6 +19,7 @@ namespace IZ_DB_app
     /// <summary>
     /// Логика взаимодействия для Window1.xaml
     /// </summary>
+
     public partial class LoginWindow : Window
     {
         public LoginWindow()
@@ -26,18 +27,21 @@ namespace IZ_DB_app
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_admin_Click(object sender, RoutedEventArgs e)
         {
+            MainWindow parent = (MainWindow)this.Owner;
+            parent.Show();
             Hide();
-            Owner.Show();
+
         }
 
-        
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            Hide();
-            Owner.Show();
 
+        private void Button_manager_Click(object sender, RoutedEventArgs e)
+        {
+            Manager manager = new();
+            manager.Owner = this;
+            manager.Show();
+            Hide();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
