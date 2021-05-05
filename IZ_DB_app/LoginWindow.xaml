@@ -22,8 +22,8 @@
             <RowDefinition Height="20*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Button Content="Админ" Margin="0 0 0 10" Click="Button_Click" Grid.Column="1" Grid.Row="2"/>
-        <Button Content="Так то без разницы кто" Margin="0 10 0 0" Click="Button_Click_1" Grid.Column="1" Grid.Row="3"/>
+        <Button Content="Админ" Margin="0 0 0 10" Click="Button_admin_Click" Grid.Column="1" Grid.Row="2"/>
+        <Button Content="Менеджер" Margin="0 10 0 0" Click="Button_manager_Click" Grid.Column="1" Grid.Row="3" Cursor="Hand"/>
         <Label Content="КТо ЗДесть??"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 </Window>
