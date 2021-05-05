@@ -28,7 +28,7 @@ namespace IZ_DB_app
         private Insert insert = new();
         private DataSet workDS = new DataSet();
         /// <summary>
-        /// prid это выбранный айди поставщика из списка
+        ///Это выбранный айди поставщика из списка
         /// </summary>
         private int prid;
 
@@ -135,7 +135,7 @@ namespace IZ_DB_app
 
         private void TreeViewItem_Selected(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("dsadas", "sada", MessageBoxButton.OK);
+            MessageBox.Show("Selected", "Info", MessageBoxButton.OK);
         }
 
         private void PrList_SelectionChanged(object sender, SelectionChangedEventArgs e)
