@@ -24,20 +24,27 @@ namespace IZ_DB_app
     {
         public static string connection = @"Data Source=DESKTOP-UI0U6SI\SQLEXPRESS;Initial Catalog=izdat;Integrated Security=True";
         private DataGrid roottab = new DataGrid() { IsReadOnly = true };
-        private DataGrid sctab = new() { IsReadOnly = true };
         private Insert insert = new();
         private DataSet workDS = new DataSet();
         /// <summary>
         /// prid это выбранный айди поставщика из списка
         /// </summary>
         private int prid;
+        /// <summary>
+        /// переменная для простомтра айди в меседж боксе
+        /// </summary>
+        private string temp;
 
+        /// <summary>
+        /// актуальный в момент работы айди шляпы контракта
+        /// </summary>
+        private int cnid;
         public Manager()
         {
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void SeeProviders()
         {
             using (SqlConnection conn = new SqlConnection(connection))
             {
@@ -51,6 +58,11 @@ namespace IZ_DB_app
                 }
 
             }
+
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SeeProviders();
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -122,6 +134,20 @@ namespace IZ_DB_app
             {
                 MessageBox.Show("Остались пустые поля", "Беда!", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+
+            using (SqlConnection conn = new SqlConnection(connection))
+            {
+                conn.Open();
+                //Заполнение поставщиками
+                SqlDataAdapter sda = new SqlDataAdapter("select [provider_name], [provider_id] from [dbo].[Providers]", conn);
+                sda.Fill(workDS, "Providers");
+                for (int i = (workDS.Tables["Providers"].Rows.Count)-1; i < workDS.Tables["Providers"].Rows.Count; i++)
+                {
+                    prList.Items.Add(workDS.Tables["Providers"].Rows[i].ItemArray[0]);
+                }
+
+            }
         }
 
         private void decline_Click(object sender, RoutedEventArgs e)
@@ -133,16 +159,55 @@ namespace IZ_DB_app
             addProvider.IsOpen = false;
         }
 
-        private void TreeViewItem_Selected(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("dsadas", "sada", MessageBoxButton.OK);
-        }
-
         private void PrList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             prid = int.Parse(workDS.Tables["Providers"].Rows[prList.SelectedIndex].ItemArray[1].ToString());
+            temp = Convert.ToString(prid);
+            //MessageBox.Show(temp, "sada", MessageBoxButton.OK);
+            ContractSpan.Visibility = Visibility.Visible;
+            ScStep.Visibility = Visibility.Visible;
+        }
 
-            
+        private void ScStep_Click(object sender, RoutedEventArgs e)
+        {
+            if (ContractSpan.Text != "" && prid >= 1)
+            {
+
+                ContractSpan.IsEnabled = false;
+                ScStep.IsEnabled = false;
+
+                using (SqlConnection conn = new SqlConnection(connection))
+                {
+                    conn.Open();
+                    List<string> vars = new();
+
+                    vars.Add(ContractSpan.Text);
+                    vars.Add(prid.ToString());
+
+                    insert.SetVars(vars);
+
+                    string command = insert.GetTableCommand();
+                    SqlCommand com = new SqlCommand(command, conn);
+                    com.ExecuteNonQuery();
+
+                }
+
+                TableOutput("exec loadContract", roottab);
+               
+                cnid = int.Parse(workDS.Tables["Contract"].Rows[prList.SelectedIndex].ItemArray[1].ToString());
+                
+                
+
+            }
+            else
+            {
+                MessageBox.Show("Заполните поле описания!", "Беда!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ContractSpan_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            insert.insertCommand = @"insert into [dbo].[Contract] values('?', ?)";
         }
     }
 

@@ -21,9 +21,9 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="170*"/>
-            <ColumnDefinition Width="399*"/>
-            <ColumnDefinition Width="721*"/>
+            <ColumnDefinition Width="85*"/>
+            <ColumnDefinition Width="229*"/>
+            <ColumnDefinition Width="331*"/>
         </Grid.ColumnDefinitions>
         <Menu Grid.Column="0"
               Grid.Row="0" Grid.ColumnSpan="3">
@@ -58,12 +58,24 @@
             </MenuItem>
 
         </Menu>
-        <ListBox x:Name="prList" Grid.Row="1" Grid.Column="0" SelectionChanged="PrList_SelectionChanged">
-            
-        </ListBox>
-        <TabControl Grid.Column="2" Grid.Row="1" x:Name="vivod">
+        <ListBox x:Name="prList" Grid.Row="1" Grid.Column="0" SelectionChanged="PrList_SelectionChanged"/>
+        <TabControl Grid.Column="2" Grid.Row="1" x:Name="vivod"/>
 
-        </TabControl>
+        <Grid Grid.Row="1" Grid.Column="1" x:Name="additionalGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
 
+            <TextBox Grid.ColumnSpan="2" x:Name="ContractSpan" BorderThickness="1" Margin="0 0 0 10" Visibility="Hidden" TextChanged="ContractSpan_TextChanged"></TextBox>
+            <Button x:Name="ScStep" Content="Далее" Grid.Column="3" Margin="10" Visibility="Hidden" Click="ScStep_Click"></Button>
+        </Grid>
+        
     </Grid>
 </Window>
