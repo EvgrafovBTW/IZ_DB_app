@@ -81,6 +81,18 @@ namespace IZ_DB_app
                 conn.Close();
             }
         }
+        private void TableOutput(string sql, DataGrid dataGrid, string tableName)
+        {
+            using (SqlConnection conn = new SqlConnection(connection))
+            {
+                conn.Open();
+                SqlDataAdapter sda = new SqlDataAdapter(sql, conn);
+                workDS.Tables[tableName]?.Clear();
+                sda.Fill(workDS,tableName);
+                dataGrid.ItemsSource = workDS.Tables[tableName].DefaultView;
+                conn.Close();
+            }
+        }
 
         private void Refresh()
         {
@@ -192,7 +204,7 @@ namespace IZ_DB_app
 
                 }
 
-                TableOutput("exec loadContract", roottab);
+                TableOutput("exec loadContract", roottab, "Contract");
                
                 cnid = int.Parse(workDS.Tables["Contract"].Rows[prList.SelectedIndex].ItemArray[1].ToString());
                 
