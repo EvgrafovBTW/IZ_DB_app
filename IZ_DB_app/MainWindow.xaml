@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IZ_DB_app"
         mc:Ignorable="d"
-        Title="Здравствуйте!" Height="656" Width="1290"
+        Title="Его величесвто Админ" Height="656" Width="1290"
         Loaded="Window_Loaded"
         >
     <Grid>

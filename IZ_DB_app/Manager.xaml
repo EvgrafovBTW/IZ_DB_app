@@ -63,19 +63,32 @@
 
         <Grid Grid.Row="1" Grid.Column="1" x:Name="additionalGrid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="205*"/>
+                <ColumnDefinition Width="113*"/>
+                <ColumnDefinition Width="140*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="137*"/>
+                <RowDefinition Height="165*"/>
+                <RowDefinition Height="84*"/>
             </Grid.RowDefinitions>
 
-            <TextBox Grid.ColumnSpan="2" x:Name="ContractSpan" BorderThickness="1" Margin="0 0 0 10" Visibility="Hidden" TextChanged="ContractSpan_TextChanged"></TextBox>
-            <Button x:Name="ScStep" Content="Далее" Grid.Column="3" Margin="10" Visibility="Hidden" Click="ScStep_Click"></Button>
+            <TextBox Visibility="Hidden" Grid.ColumnSpan="2" x:Name="ContractSpan" BorderThickness="1" Margin="0,0,0,10"  TextChanged="ContractSpan_TextChanged"></TextBox>
+            <Button  Visibility="Hidden"  x:Name="ScStep" Content="Далее" Grid.Column="2" Margin="10,55,10,50"  Click="ScStep_Click"></Button>
+            <Grid Margin="0,129,6,0" Grid.RowSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Label Visibility="Hidden" Content="Введите название материала:"  x:Name="zkt1"/>
+                <TextBox Visibility="Hidden" x:Name="ZkMaterial" Grid.Row="1" BorderThickness="1"  TextChanged="ZkMaterial_TextChanged"/>
+                <Label Visibility="Hidden" Content="Введите количество материала:" Grid.Row="2"  x:Name="zkt2"/>
+                <TextBox Visibility="Hidden" x:Name="AmountZkMaterial" Grid.Row="3" BorderThickness="1"  TextChanged="AmountZkMaterial_TextChanged"/>
+            </Grid>
+            <Button Visibility="Hidden" Grid.Column="1" Grid.Row="1" Content="Рассчитать" x:Name="Price" Click="Price_Click" Grid.ColumnSpan="2" Margin="10 35 10 0"/>
         </Grid>
-        
+
     </Grid>
 </Window>

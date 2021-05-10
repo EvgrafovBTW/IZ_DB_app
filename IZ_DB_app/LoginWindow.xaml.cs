@@ -48,5 +48,13 @@ namespace IZ_DB_app
         {
             System.Windows.Application.Current.Shutdown();
         }
+
+        private void Button_employeer_Click(object sender, RoutedEventArgs e)
+        {
+            Employeer employeer = new();
+            employeer.Owner = this;
+            employeer.Show();
+            Hide();
+        }
     }
 }

@@ -26,6 +26,7 @@ namespace IZ_DB_app
         private DataGrid roottab = new DataGrid() { IsReadOnly = true };
         private Insert insert = new();
         private DataSet workDS = new DataSet();
+        Random rnd = new();
         /// <summary>
         /// prid это выбранный айди поставщика из списка
         /// </summary>
@@ -39,6 +40,14 @@ namespace IZ_DB_app
         /// актуальный в момент работы айди шляпы контракта
         /// </summary>
         private int cnid;
+        /// <summary>
+        /// актуальный в момент работы айди заказанного материала
+        /// </summary>
+        private int mtid;
+        /// <summary>
+        /// сгенерированная цена по контракту
+        /// </summary>
+        private int cmpr;
         public Manager()
         {
             InitializeComponent();
@@ -188,6 +197,7 @@ namespace IZ_DB_app
                 ContractSpan.IsEnabled = false;
                 ScStep.IsEnabled = false;
 
+
                 using (SqlConnection conn = new SqlConnection(connection))
                 {
                     conn.Open();
@@ -202,14 +212,21 @@ namespace IZ_DB_app
                     SqlCommand com = new SqlCommand(command, conn);
                     com.ExecuteNonQuery();
 
+                    SqlCommand cnt = new();
+                    cnt.Connection = conn;
+                    cnt.CommandText = "SELECT @@identity FROM Contract";
+                    object result = cnt.ExecuteScalar();
+                    cnid = Convert.ToInt32(result);
+                    
                 }
+                TableOutput("exec loadContract", roottab, "Contract");                                    //НЕ РАБОТАЕТ ХЗ ПОЧЕМУ
 
-                TableOutput("exec loadContract", roottab, "Contract");
-               
-                cnid = int.Parse(workDS.Tables["Contract"].Rows[prList.SelectedIndex].ItemArray[1].ToString());
-                
-                
+                zkt1.Visibility = Visibility.Visible;
+                zkt2.Visibility = Visibility.Visible;
+                ZkMaterial.Visibility = Visibility.Visible;
+                AmountZkMaterial.Visibility = Visibility.Visible;
 
+                
             }
             else
             {
@@ -217,9 +234,103 @@ namespace IZ_DB_app
             }
         }
 
+
         private void ContractSpan_TextChanged(object sender, TextChangedEventArgs e)
         {
             insert.insertCommand = @"insert into [dbo].[Contract] values('?', ?)";
+        }
+
+        private void AmountZkMaterial_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ZkMaterial.Text != "" && AmountZkMaterial.Text != "") { Price.Visibility = Visibility.Visible; Price.IsEnabled = true; }
+            else { Price.IsEnabled = false; }
+        }
+
+        private void ZkMaterial_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ZkMaterial.Text != "" && AmountZkMaterial.Text != "") { Price.Visibility = Visibility.Visible; Price.IsEnabled = true; }
+            else { Price.IsEnabled = false; }
+        }
+
+        private void Price_Click(object sender, RoutedEventArgs e)
+        {
+            Price.IsEnabled = false;
+            AmountZkMaterial.IsEnabled = false;
+            ZkMaterial.IsEnabled = false;
+            
+            insert.insertCommand = @"insert into [dbo].[Materials] values('?', ?)";
+
+            using (SqlConnection conn = new SqlConnection(connection))
+            {
+                conn.Open();
+                List<string> vars = new();
+
+                vars.Add(ZkMaterial.Text);
+                vars.Add(AmountZkMaterial.Text);
+
+                insert.SetVars(vars);
+
+                string command = insert.GetTableCommand();
+                SqlCommand com = new SqlCommand(command, conn);
+                com.ExecuteNonQuery();
+
+                SqlCommand cnt = new();
+                cnt.Connection = conn;
+                cnt.CommandText = "SELECT @@identity FROM Materials";
+                object result = cnt.ExecuteScalar();
+                mtid = Convert.ToInt32(result);
+            }
+            cmpr = rnd.Next(200, 900);
+
+            insert.insertCommand = @"insert into [dbo].[Contract_materials] values(?, ?, ?)";
+
+
+            using (SqlConnection conn = new SqlConnection(connection))
+            {
+                conn.Open();
+                List<string> vars = new();
+
+                vars.Add(cnid.ToString());
+                vars.Add(mtid.ToString());
+                vars.Add(cmpr.ToString());
+
+                insert.SetVars(vars);
+
+                string command = insert.GetTableCommand();
+                SqlCommand com = new SqlCommand(command, conn);
+                com.ExecuteNonQuery();
+            }
+
+           MessageBoxResult res = MessageBox.Show("Материал закуплен по цене " + (cmpr.ToString()), "Дело сделано!", MessageBoxButton.OK, MessageBoxImage.Information);
+            
+            switch (res) 
+            {
+                case MessageBoxResult.OK:
+                    ContractSpan.IsEnabled = true;
+                    ContractSpan.Visibility = Visibility.Hidden;
+                    ContractSpan.Text = "";
+
+                    ScStep.IsEnabled = true;
+                    ScStep.Visibility = Visibility.Hidden;
+
+                    zkt1.IsEnabled = true;
+                    zkt1.Visibility = Visibility.Hidden;
+
+                    zkt2.IsEnabled = true;
+                    zkt2.Visibility = Visibility.Hidden;
+
+                    ZkMaterial.IsEnabled = true;
+                    ZkMaterial.Visibility = Visibility.Hidden;
+                    ZkMaterial.Text = "";
+
+                    AmountZkMaterial.IsEnabled = true;
+                    AmountZkMaterial.Visibility = Visibility.Hidden;
+                    AmountZkMaterial.Text = "";
+
+                    Price.IsEnabled = true;
+                    Price.Visibility = Visibility.Hidden;
+                    break;
+            }
         }
     }
 
