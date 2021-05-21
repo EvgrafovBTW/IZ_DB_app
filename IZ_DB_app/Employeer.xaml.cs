@@ -19,10 +19,7 @@ namespace IZ_DB_app
     /// </summary>
     public partial class Employeer : Window
     {
-        public static string connection = @"Data Source=DESKTOP-UI0U6SI\SQLEXPRESS;Initial Catalog=izdat;Integrated Security=True";
-        private DataGrid roottab = new DataGrid() { IsReadOnly = true };
-        private Insert insert = new();
-
+        
         public Employeer()
         {
             InitializeComponent();
@@ -33,11 +30,11 @@ namespace IZ_DB_app
             System.Windows.Application.Current.Shutdown();
         }
 
-        private void Employee_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_change_Click(object sender, RoutedEventArgs e)
         {
-          /*  EmployeeAdd eadd = new EmployeeAdd();
-            eadd.Content = new Page1();
-            eadd.Show();*/
+            LoginWindow parent = (LoginWindow)this.Owner;
+            parent.Show();
+            Hide();
         }
     }
 }

@@ -79,17 +79,18 @@
 
             <MenuItem Header="///">
                 <MenuItem Header="Сменить пользователя" Click="MenuItem_change_Click" />
-                <MenuItem Header="Справка" />
+                <MenuItem Header="Справка" Click="MenuItem_spravka_Click"/>
             </MenuItem>
         </Menu>
+        
         <TabControl Grid.Row="1" Grid.Column="2" x:Name="vivod">
 
         </TabControl>
+        
         <TabControl Grid.Row="1" Grid.ColumnSpan="2">
             <TabItem Header="Добавление">
                 <TabItem.Content>
                     <DockPanel>
-                        <Grid Background="#FFE5E5E5"/>
                         <Label DockPanel.Dock ="Top" HorizontalAlignment="Center" x:Name="addTitle" Visibility="Hidden">Добавление</Label>
                         <Label DockPanel.Dock="Top" x:Name="header1" Margin="10 0" Visibility="Hidden">Заголовок 1</Label>
                         <Label DockPanel.Dock="Top"></Label>
@@ -113,10 +114,7 @@
                 </TabItem.Content>
 
             </TabItem>
-            <TabItem Header="фильтр">
-                <Grid Background="#FFE5E5E5"/>
 
-            </TabItem>
         </TabControl>
 
     </Grid>

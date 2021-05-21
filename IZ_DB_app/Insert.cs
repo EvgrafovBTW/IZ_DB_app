@@ -10,17 +10,14 @@ namespace IZ_DB_app
     {
         public string insertCommand;
 
-        private List<string> vars = new List<string>();
+        private List<string> vars = new();
         public Insert()
         {
-
         }
-
         public void SetVars(List<string> list)
         {
             vars = list;
         }
-
         public string GetTableCommand()
         {
 

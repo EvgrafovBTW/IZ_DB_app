@@ -27,9 +27,7 @@
         </Grid.ColumnDefinitions>
         <Menu Grid.Column="0"
               Grid.Row="0" Grid.ColumnSpan="3">
-            <MenuItem Header="Просмотр">
-
-            </MenuItem>
+            
 
             <materialDesign:DialogHost x:Name="addProvider">
                 <materialDesign:DialogHost.DialogContent>

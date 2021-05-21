@@ -26,7 +26,7 @@ namespace IZ_DB_app
 
     public partial class MainWindow : Window
     {
-        public static string connection = @"Data Source=DESKTOP-UI0U6SI\SQLEXPRESS;Initial Catalog=izdat;Integrated Security=True";
+        private static string connection = Connection.connection;
         private Insert insert = new();
         private DataGrid roottab = new DataGrid() { IsReadOnly = true };
         private DataGrid sctab = new() { IsReadOnly = true };
@@ -34,8 +34,6 @@ namespace IZ_DB_app
         {
             InitializeComponent();
         }
-
-        LoginWindow login = new LoginWindow();
 
         private void TableOutput(string sql, DataGrid dataGrid)
         {
@@ -55,7 +53,7 @@ namespace IZ_DB_app
             vivod.Items.Clear();
         }
 
-
+        LoginWindow login = new LoginWindow();
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             login.Owner = this;
@@ -990,7 +988,10 @@ namespace IZ_DB_app
             insert.insertCommand = @"insert into [dbo].[Workplace_Equipment] values(?, ?)";
         }
 
-       
+        private void MenuItem_spravka_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 }

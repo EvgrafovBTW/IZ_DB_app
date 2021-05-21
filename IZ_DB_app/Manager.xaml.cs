@@ -22,7 +22,7 @@ namespace IZ_DB_app
     /// </summary>
     public partial class Manager : Window
     {
-        public static string connection = @"Data Source=DESKTOP-UI0U6SI\SQLEXPRESS;Initial Catalog=izdat;Integrated Security=True";
+        private static string connection = Connection.connection;
         private DataGrid roottab = new DataGrid() { IsReadOnly = true };
         private Insert insert = new();
         private DataSet workDS = new DataSet();
@@ -101,11 +101,6 @@ namespace IZ_DB_app
                 dataGrid.ItemsSource = workDS.Tables[tableName].DefaultView;
                 conn.Close();
             }
-        }
-
-        private void Refresh()
-        {
-            vivod.Items.Clear();
         }
 
         private void MenuItem_change_Click(object sender, RoutedEventArgs e)
